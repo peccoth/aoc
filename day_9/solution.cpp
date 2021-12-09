@@ -1,9 +1,23 @@
 #include<iostream>
+#include<algorithm>
+#include<queue>
 #include<fstream>
 #include<vector>
 
 #define SIZE_X 100
 #define SIZE_Y 100
+
+int checked[SIZE_Y][SIZE_X] = { 0 };
+int arr[SIZE_Y][SIZE_X];
+
+void print_checked() {
+    for (int i = 0; i < SIZE_Y; i++) {
+        for (int j = 0; j < SIZE_X; j++)
+            std::cout<<checked[i][j];
+        std::cout<<"\n";
+    }
+}
+
 int min(std::vector<int> arr) {
     int min = arr[0];
     for (auto x  = arr.begin() + 1; x < arr.end(); x ++)
@@ -11,50 +25,37 @@ int min(std::vector<int> arr) {
             return -1;
     return min;
 }
-int basin_size(int y, int x, int arr[SIZE_Y][SIZE_X]) {
-    int size = 1;
-    int checked[SIZE_Y][SIZE_X] = { 0 };
-    checked[y][x] = 1;
-    int i = y, j = x;
-    while (1) {
-        if (arr[i + 1][j] == 9)
-            arr[i + 1][j] = 1;
-        if (arr[i - 1][j] == 9)
-            arr[i - 1][j] = 1;
-        if (arr[i][j + 1] == 9)
-            arr[i][j + 1] = 1;
-        if (arr[i][j - 1] == 9)
-            arr[i][j - 1] = 1;
+int row[] = {-1, 0, 1, 0};
+int col[] = { 0,-1, 0, 1};
 
-        if (arr[i+1][j] != 9 && i < SIZE_Y - 1 && !checked[i-1][j]) {
-            i++;
-            checked[i][j] = 1;
-            size++;
-        } else if (arr[i-1][j] != 9 && i > 0) {
-            i--;
-            checked[i][j] = 1;
-            size++;
-        } else if (arr[i][j + 1] != 9 && i < SIZE_X - 1 && !checked[i][j + 1]) {
-            j++;
-            checked[i][j] = 1;
-            size++;
-        } else if (arr[i][j - 1] != 9 && i > 0 && !checked[i][j - 1]) {
-            j--;
-            checked[i][j] = 1;
-            size++;
-        } else {   
-            i = y;
-            j = x;
+bool is_safe(int y, int x) {
+    return (y>=0 && x >= 0 && y < SIZE_Y && x < SIZE_X && checked[y][x] == 0 && arr[y][x] != 9);
+}
+void basin_sum(int y, int x) {
+    std::queue<std::pair<int,int>> q;
+    q.push({y,x});
+    while (!q.empty()) {
+        std::pair<int,int> node = q.front(); 
+        q.pop();
+        checked[node.first][node.second] = 1;
+        for (int k = 0; k<4;k++) {
+            if (is_safe(node.first + row[k],node.second + col[k]))
+                    q.push({node.first + row[k], node.second + col[k]});
         }
-        if (checked[y+1][x] && checked[y-1][x] && checked[y][x+1] && checked[y][x+1])
-            break;
+
     }
-    return size;
+}
+int count_ones() {
+    int counter = 0;
+    for (int i=0;i<SIZE_Y;i++)
+        for (int j=0;j<SIZE_X;j++)
+            if (checked[i][j] == 1)
+                counter++;
+    return counter;
 }
 
 int main() {
     std::ifstream in("input.txt");
-    int arr[SIZE_Y][SIZE_X];
     int a;
     for (int i=0;i<SIZE_Y;i++) {
         for (int j=0;j<SIZE_X;j++) {
@@ -64,12 +65,8 @@ int main() {
         in.get();
     }
     std::vector<int> to_test;
+    std::vector<int> sums;
     int sum = 0;
-    //for (int i = 0; i < SIZE_Y; i++) {
-    //    for (int j = 0; j < SIZE_X; j++)
-    //        std::cout<<arr[i][j];
-    //    std::cout<<"\n";
-    //}
 
     for (int j=0;j<SIZE_Y;j++) {
         for (int i=0;i<SIZE_X;i++) {
@@ -85,10 +82,14 @@ int main() {
                 to_test.push_back(arr[j][i+1]);
             if (arr[j][i] == min(to_test)) {
                 sum += arr[j][i] + 1;
-                std::cout<<j<<" "<<i<<" "<<arr[j][i] + 1<<"\n";
-                std::cout<<basin_size(j,i,arr);
+                int prev_total = count_ones();
+                basin_sum(j,i);
+                sums.push_back(count_ones() - prev_total);
             }
         }
     }
+
+    std::sort(sums.begin(),sums.end());
     std::cout<<sum<<"\n";
+    std::cout<<sums[sums.size()-1] * sums[sums.size()-2] * sums[sums.size()-3];
 }
