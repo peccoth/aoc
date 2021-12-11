@@ -21,12 +21,10 @@ void flood(int y, int x) {
             counter ++;
             flashed[node.first][node.second] = 1;
             arr[node.first][node.second] = 0;
-            for (int k = 0; k<8;k++) {
+            for (int k = 0; k<8;k++) 
                 if (is_safe(node.first + row[k],node.second + col[k]))
                         q.push({node.first + row[k], node.second + col[k]});
-            }
         }
-
     }
 }
 bool check_sync() {
@@ -54,9 +52,10 @@ int main() {
                 flood(i,j);
             }
         }
+        if (k == 100)
+            std::cout<<counter<<"\n";
         k++;
     }
-    std::cout<<counter<<"\n";
     std::cout<<k; 
             
 }
