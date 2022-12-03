@@ -41,6 +41,5 @@ int main() {
             }
         }
     }
-    printf("%d \n",priority_sum);
-    printf("%d \n",score);
+    printf("%d\n%d\n",priority_sum,score);
 }
