@@ -1,55 +1,46 @@
-#include<iostream>
+#include<stdio.h>
 #include<fstream>
 #include<string>
+#include<cstring>
 
 int main() {
-    std::ifstream input("input");
-    int priority_sum = 0;
-
+    std::fstream input("input");
     std::string line;
+
+    int priority_sum = 0;
+    bool found[256]={0};
     size_t dupe;
-    while (getline(input,line)) {
-        std::string already_found = "";
-        for (int i=0;i<line.length()/2;i++) {
-            dupe = line.find(line[i],line.length()/2);
-            if (already_found.find(line[dupe]) != std::string::npos) {
-                break;
-            }
-            if (dupe != std::string::npos) {
-                already_found += line[dupe];
-                priority_sum += (int)line[dupe] > 97 ? (int)line[dupe] - 96 : (int)line[dupe] - 38;
-            }
 
-        }
-    }
-    std::cout<<priority_sum<<std::endl;
-
-    input.clear();
-    input.seekg(0,std::ios::beg);
-    std::string potential_badges = "";
-    std::string new_potential_badges = "";
     int n = 0, score = 0;
-    size_t unique;
+    bool potential_badges[512] = {0};
+
     while (getline(input,line)) {
-        if (n % 3 == 0) {
-            potential_badges = line;
-            new_potential_badges = "";
-            n++;
-            continue;
+        memset(found,0,sizeof(found));
+        for (size_t i = 0; i < line.length()/2; i++) {
+            dupe = line.find(line[i], line.length()/2);
+            if ( dupe == -1 )
+                continue;
+            if (found[line[dupe]]) 
+                break;
+            found[line[dupe]] = 1;
+            priority_sum += (int)line[dupe] > 97 ? (int)line[dupe] - 96 : (int)line[dupe] - 38;
         }
 
-        for (int i = 0; i<potential_badges.length();i++) {
-            unique = line.find(potential_badges[i]);
-            if (unique != std::string::npos) {
-                new_potential_badges += line[unique];
+        if (n < 2) {
+            for (auto x : line) 
+                potential_badges[x + 256 * n] = 1;
+            n++;
+        } else {
+            for (auto x : line) {
+                if (potential_badges[x] + potential_badges[x + 256] == 2) {
+                    score += (int)x > 97 ? (int)x - 96 : (int)x - 38;
+                    memset(potential_badges,0,sizeof(potential_badges));
+                    n = 0;
+                    break;
+                }
             }
         }
-        if (n % 3 == 2) {
-            score += (int)new_potential_badges[0] > 97 ? (int)new_potential_badges[0] - 96 : (int)new_potential_badges[0] - 38;
-        }
-        potential_badges = new_potential_badges;
-        new_potential_badges = "";
-        n++;
     }
-    std::cout<<score<<std::endl;
+    printf("%d \n",priority_sum);
+    printf("%d \n",score);
 }
