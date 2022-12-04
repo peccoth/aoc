@@ -18,8 +18,7 @@ int main() {
         elf1 = split(a.substr(0,delim));
         elf2 = split(a.substr(delim+1));
         silver += (elf1.first <= elf2.first && elf1.second >= elf2.second) || (elf2.first <= elf1.first && elf2.second >= elf1.second);
-        gold += (elf1.first <= elf2.first && elf1.second >= elf2.first) || (elf1.first <= elf2.second && elf1.second >= elf2.second) ||
-                (elf2.first <= elf1.first && elf2.second >= elf1.first) || (elf2.first <= elf1.second && elf2.second >= elf1.second);
+        gold += (elf1.first >= elf2.first && elf1.first <= elf2.second) | (elf2.first >= elf1.first && elf2.first <= elf1.second);
     }
     cout<<silver<<endl<<gold<<endl;
 }
