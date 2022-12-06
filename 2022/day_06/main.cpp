@@ -12,8 +12,7 @@ bool doublecheck(std::list<char> in) {
                 out = 1;
             j++;
         }
-        i++;
-        j=0;
+        i++, j=0;
     }
     return out;
 }
@@ -27,22 +26,17 @@ int main() {
         c = std::cin.get(); 
         last14.push_back(c);
     }
+
     auto it = last14.end();
-    it = prev(it,1);
-    last4.push_front(*it);
-    it = prev(it,1);
-    last4.push_front(*it);
-    it = prev(it,1);
-    last4.push_front(*it);
-    it = prev(it,1);
-    last4.push_front(*it);
+    for (int i = 0; i<4; i++) {
+        it = prev(it,1);
+        last4.push_front(*it);
+    }
 
     bool a = 0, b = 0;
     bool silver_done = 0;
-    while (1) {
-        c = std::cin.get(); 
-        silver+= (!silver_done);
-        gold++;
+    while (c = std::cin.get()) {
+        silver+= (!silver_done), gold++;
 
         last4.pop_front();
         for (auto x : last4) {
@@ -67,13 +61,7 @@ int main() {
                 break;
         }
 
-        if (c == EOF) {
-            std::cout<<"Reached end of file! \n";
-            break;
-        }
-
-        a = 0;
-        b = 0;
+        a = 0, b = 0;
     }
 
     std::cout<<silver<<" "<<gold<<std::endl;
