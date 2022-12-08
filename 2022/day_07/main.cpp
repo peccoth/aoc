@@ -1,18 +1,42 @@
 #include<iostream>
 #include<map>
+#define DISK_SIZE 70000000
+#define REQUIRED_SPACE 30000000
 
 struct node {
     int value;
     node *ancestor;
     std::map<std::string, node> children;
 };
-int sum_below (node* in) {
-    if (in -> children.empty())
+int sum_below (node* in) { if (in -> children.empty())
         return in -> value;
-    for ( auto [ dir, n ] : in -> children) {
+    for ( auto& [ dir, n ] : in -> children) {
         in-> value += sum_below (&n);
     }
     return in -> value;
+}
+int silver = 0;
+void silver_check (node* in) {
+    if (in -> value < 100000)
+        silver += in -> value;
+    if (!in -> children.empty() ) {
+        for (auto& [dir, n] : in -> children) {
+            silver_check(&n);
+        }
+    }
+}
+int smallest_size = DISK_SIZE;
+int space_left = DISK_SIZE;
+void gold_check (node* in) {
+    if ( space_left + in -> value >= REQUIRED_SPACE ) {
+        if (smallest_size > in -> value)
+            smallest_size = in -> value;
+    }
+    if (!in -> children.empty()) {
+        for (auto& [dir, n] : in -> children) {
+            gold_check(&n);
+        }
+    }
 }
 int main() {
     std::string in;
@@ -41,12 +65,11 @@ int main() {
             current_node = &(current_node -> children[in.substr(in.find_last_of(' ') +1)]);
         }
     }
-    for ( auto [ dir , n ] : root -> children ) {
-        std::cout<<dir<<" "<<n.value<<std::endl;
-        if (!n.children.empty()) {
-            for (auto [dir2, n2] : n.children )
-                std::cout<<dir2<<" "<<n2.value<<std::endl;
-        }
-    }
     sum_below(root);
+    silver_check(root);
+    
+    //std::cout<<silver<<std::endl;
+    space_left -= root -> value;
+    gold_check(root);
+    std::cout<<space_left<<" "<<smallest_size<<std::endl;
 }
