@@ -1,8 +1,10 @@
 #include<iostream>
 #include<unordered_map>
-#define DISK_SIZE 3000000000
+#define DISK_SIZE 1300000000000 //megaboy
+#define REQUIRED_SPACE 300000000000 //megaboy
+//#define DISK_SIZE 3000000000 //bigboy
+//#define REQUIRED_SPACE 700000000 //bigboy
 //#define DISK_SIZE 70000000
-#define REQUIRED_SPACE 700000000
 //#define REQUIRED_SPACE 30000000
 
 struct node {
