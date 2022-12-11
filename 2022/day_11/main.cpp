@@ -80,8 +80,5 @@ int main() {
         else
             top2 = monkeys[i].inspections;
     }
-    std::cout<<modulus<<std::endl;
-    for ( int i = 0; i< MONKEY_AMOUNT;i++)
-        std::cout<<monkeys[i].inspections<<std::endl;
     std::cout<<max*top2<<std::endl;
 }
