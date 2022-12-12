@@ -11,7 +11,12 @@ const int di[4] = {  -1,
 const int dj[4] = {   0,
                    -1,  1,
                       0   };
-vector<vector<int>> bfs( vector<string>& in, int si, int sj) {
+bool ok (char a, char b, bool reverse=0) {
+    if (reverse)
+        return a+1 >= b;
+    return a <= b + 1;
+}
+vector<vector<int>> bfs( vector<string>& in, int si, int sj, bool reverse = 0) {
     vector<vector<int>> dist;
     for ( int i = 0; i < in.size(); i++ ) {
         vector<int> x;
@@ -34,7 +39,7 @@ vector<vector<int>> bfs( vector<string>& in, int si, int sj) {
             if ( 0 <= ni && ni < in.size() &&
                  0 <= nj && nj < in[0].size() &&   
                  ndist < dist[ni][nj] ) {
-                if ( in[ni][nj] <= c + 1 ) {
+                if (ok(in[ni][nj], c, reverse )) {
                     dist[ni][nj] = ndist;
                     q.push({ni,nj});
                 }
@@ -63,16 +68,13 @@ int main() {
         }
     } 
     
-    int gold = INT_MAX, bfs_res;
-    for ( int i = 0; i < input.size(); i++) {
-        for (int j = 0; j < input[i].size(); j++ ){
-            if (input[i][j] == 'a') {
-                bfs_res = bfs(input,i,j)[ei][ej];
-                if (bfs_res < gold) 
-                    gold = bfs_res;
-            }
-        }
-    }
     cout<<bfs(input,si,sj)[ei][ej]<<endl;
+    int gold = INT_MAX, bfs_res;
+    vector<vector<int>> dist = bfs(input,ei,ej,1);
+    for ( int i = 0; i < dist.size(); i++ ){
+        for ( int j = 0; j < dist[0].size(); j++)
+            if (input[i][j] == 'a' && dist[i][j] < gold)
+                gold = dist[i][j];
+    }
     cout<<gold<<endl;
 }
