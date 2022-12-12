@@ -11,7 +11,7 @@ const int di[4] = {  -1,
 const int dj[4] = {   0,
                    -1,  1,
                       0   };
-int bfs( vector<string>& in, int si, int sj, int ei, int ej) {
+vector<vector<int>> bfs( vector<string>& in, int si, int sj) {
     vector<vector<int>> dist;
     for ( int i = 0; i < in.size(); i++ ) {
         vector<int> x;
@@ -42,7 +42,7 @@ int bfs( vector<string>& in, int si, int sj, int ei, int ej) {
         }
 
     }
-    return dist[ei][ej];
+    return dist;
 }
 int main() {
     string s;
@@ -63,46 +63,16 @@ int main() {
         }
     } 
     
-    vector<vector<int>> dist;
-    for ( int i = 0; i < input.size(); i++ ) {
-        vector<int> x;
-        for ( int j = 0; j < input[i].size(); j++ )
-            x.push_back(INT_MAX);
-        dist.push_back(x);
-    }
-    queue<pair<int,int>> q;
-    q.push({si,sj});
-    dist[si][sj] = 0;
-    while (!q.empty()){
-        pair<int,int> p = q.front();
-        q.pop();
-        char c = input[p.first][p.second];
-        int ndist = dist[p.first][p.second] + 1;
-
-        for ( int i=0; i<4; i++) {
-            int ni = p.first + di[i];
-            int nj = p.second + dj[i];
-            if ( 0 <= ni && ni < input.size() &&
-                 0 <= nj && nj < input[0].size() &&   
-                 ndist < dist[ni][nj] ) {
-                if ( input[ni][nj] <= c + 1 ) {
-                    dist[ni][nj] = ndist;
-                    q.push({ni,nj});
-                }
-            }
-        }
-
-    }
     int gold = INT_MAX, bfs_res;
     for ( int i = 0; i < input.size(); i++) {
         for (int j = 0; j < input[i].size(); j++ ){
             if (input[i][j] == 'a') {
-                bfs_res = bfs(input,i,j,ei,ej);
+                bfs_res = bfs(input,i,j)[ei][ej];
                 if (bfs_res < gold) 
                     gold = bfs_res;
             }
         }
     }
-    cout<<bfs(input,si,sj,ei,ej)<<endl;
+    cout<<bfs(input,si,sj)[ei][ej]<<endl;
     cout<<gold<<endl;
 }
