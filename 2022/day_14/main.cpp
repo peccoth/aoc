@@ -43,13 +43,16 @@ int main() {
     }
     for (int i = 0; i < 1200; i++)
         array[y_max+2][i] = '#';
-    bool fail = 0;
-    int silver = 0;
+    bool fail_s = 0, fail_g = 0;
+    int silver = 0, gold = 0;
     
-    while (!fail){
+    while (!(fail_s & fail_g)){
         int sand_x = 500, sand_y = 0;
-        silver ++;
+        silver += !fail_s;
+        gold ++;
         while (true) {
+            if ( sand_y > y_max )
+                fail_s = 1;
             if ( array[sand_y+1][sand_x] == '.'){
                 sand_y++;
                 continue;
@@ -63,7 +66,7 @@ int main() {
                 continue;
             }
             if (sand_y == 0 && array[sand_y][sand_x] == 'o') {
-                fail = 1;
+                fail_g = 1;
                 break;
             }
             array[sand_y][sand_x] = 'o';
@@ -71,11 +74,5 @@ int main() {
         }
     }
 
-    for ( int i = 0; i < 200; i++) {
-        for ( int j = 300; j < 700; j++) {
-            std::cout<<array[i][j];
-        }
-        std::cout<<std::endl;
-    }
-    std::cout<<silver-1<<std::endl;
+    std::cout<<silver-1<< " "<< gold -1<<std::endl;
 }
