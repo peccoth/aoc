@@ -1,13 +1,13 @@
 #include<iostream>
-#include<unordered_set>
 #include<math.h>
+#include<climits>
 #define TARGET 2000000
 
 using std::cin;
 
 int main() {
     std::string s;
-    std::unordered_set<int> covered;
+    int min = INT_MAX, max = INT_MIN;
     while (cin.peek() != EOF) {
         cin>>s>>s>>s;
         int sx = stoi(s.substr(s.find('=')+1,s.find(',')-1));
@@ -23,21 +23,20 @@ int main() {
 
         if ( sy <= TARGET ) {
             if (sy + d >= TARGET ) {
-                for ( int i = sx - (sy + d - TARGET); i < sx + (sy + d - TARGET); i++)
-                    covered.insert(i);
+                min = sx - (sy + d - TARGET) < min ? sx - (sy + d - TARGET) : min;
+                max = sx + (sy + d - TARGET) > max ? sx + (sy + d - TARGET) : max;
             }
         }
 
 
         if ( sy >= TARGET ) {
             if (sy - d <= TARGET ) {
-                for ( int i = sx - (TARGET - (sy - d)); i < sx + (TARGET - (sy - d)); i++)
-                    covered.insert(i);
+                min = sx - (TARGET - (sy - d)) < min ? sx - (TARGET - (sy - d)) : min;
+                max = sx - (TARGET - (sy - d)) > max ? sx - (TARGET - (sy - d)) : max;
             }
         }
     }
-    //for ( auto x : covered) 
-        //std::cout<<x<<" ";
-    std::cout<<std::endl<<covered.size()<<std::endl;
+    int silver = abs(min) + abs(max);
+    std::cout<<silver<<std::endl;
 
 }
