@@ -2,9 +2,10 @@
 #include <ranges>
 
 int main() {
-  std::string a;
-  std::string nums[] = { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
   int silver = 0, gold = 0; 
+
+  std::string a;
+  const std::string nums[] = { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
   while (std::cin >> a) {
     int l = -1, r = -1;
     for (auto& x : a) 
@@ -32,7 +33,7 @@ int main() {
       }
     }
 
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 9; ++i) {
       size_t tmp = a.rfind(nums[i]);
       if (tmp > rid && tmp != std::string::npos) {
         r = i + 1;
