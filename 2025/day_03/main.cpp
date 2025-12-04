@@ -8,14 +8,14 @@ uint64_t check_line(std::string line, int bats=2) {
   int chars_left = bats;
   while (chars_left>0) {
     int t_max_pos = c_max_pos;
-    for (int i = c_max_pos + 1; i < line.size() - chars_left + 1; i++) {
+    for (int i = c_max_pos; i < line.size() - chars_left + 1; i++) {
       if (line[i] - '0' > res[bats-chars_left]) {
         res[bats-chars_left] = line[i] - '0';
         t_max_pos = i;
       }
     }
     chars_left--;
-    c_max_pos = t_max_pos;
+    c_max_pos = t_max_pos + 1;
   }
 
   uint64_t ret = 0;
