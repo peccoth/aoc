@@ -1,18 +1,6 @@
 #include <iostream>
 #include <print>
 #include <vector>
-#include <unordered_set>
-
-
-template<class A, class B>
-struct std::hash<std::pair<A, B>> {
-    size_t operator()(std::pair<A,B> const& p) const noexcept {
-        size_t h1 = std::hash<A>{}(p.first);
-        size_t h2 = std::hash<B>{}(p.second);
-        // 64-bit mix; anything sane is fine
-        return h1 ^ (h2 + 0x9e3779b97f4a7c15ULL + (h1 << 6) + (h1 >> 2));
-    }
-};
 
 bool look_around(int i, int j, std::vector<std::string>& map) {
   int roll_count = 0;
@@ -49,13 +37,13 @@ bool look_around(int i, int j, std::vector<std::string>& map) {
 }
 
 int gold_iteration(auto& map) {
-  std::unordered_set<std::pair<int,int>> removable = {};
+  std::vector<std::pair<int,int>> removable = {};
 
   for (int i = 0; i < map.size(); i++) {
     for (int j = 0; j < map[0].size(); j++) {
       if (map[i][j] == '@') {
         if (look_around(i, j, map)) {
-          removable.insert({i,j});
+          removable.emplace_back(std::make_pair(i,j));
         }
       }
     }
