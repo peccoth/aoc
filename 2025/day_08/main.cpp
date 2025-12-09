@@ -1,6 +1,7 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include <numeric>
 #include <print>
 #include <vector>
 #include <ranges>
@@ -11,7 +12,7 @@ struct Point {
   uint64_t x, y, z;
 };
 
-double distance (Point p1, Point p2) {
+auto distance (Point p1, Point p2) -> double {
   const double ret = sqrt(
         ((p1.x - p2.x) * (p1.x - p2.x))
       + ((p1.y - p2.y) * (p1.y - p2.y))
@@ -20,7 +21,7 @@ double distance (Point p1, Point p2) {
   return ret;
 }
 
-auto get_input() {
+auto get_input() -> std::vector<Point> {
   std::vector<Point> input;
   std::string line;
   while (std::getline(std::cin, line)) {
@@ -37,7 +38,7 @@ auto get_input() {
   return input;
 }
 
-auto get_distances(const auto& input) {
+auto get_distances(const auto& input) -> std::vector<std::tuple<int,int,double>> {
   std::vector<std::tuple<int,int,double>> distances;
   std::ranges::for_each(
       std::views::iota(std::size_t{0}, input.size())
@@ -50,6 +51,7 @@ auto get_distances(const auto& input) {
           distances.emplace_back(x, y, t);
       });
   });
+  std::ranges::sort(distances, [](auto x, auto y) {return get<2>(x) < get<2>(y);});
   return distances;
 }
 
@@ -60,9 +62,9 @@ auto prepare_junctions(const auto& input) {
   return junctions;
 }
 
-auto connect_junctions(const auto& distances, auto& junctions, bool gold = 0) {
+auto connect_junctions(const auto& distances, auto& junctions, bool gold = 0) -> uint64_t {
   uint64_t res = 1;
-  int circuits = 10;
+  int circuits = 0;
   auto find_connection = [&](size_t i) {
     auto [x, y, _] = distances.at(i);
     int found_l = 0, found_r = 0;
@@ -82,18 +84,13 @@ auto connect_junctions(const auto& distances, auto& junctions, bool gold = 0) {
 
     if ( rl && rr && found_l != found_r) {
       junctions[found_l].insert(junctions[found_r].begin(), junctions[found_r].end());
-      junctions[found_r].clear();
+      junctions.erase(junctions.begin() + found_r);
     }     
 
     if (gold) {
-      circuits = 0;
-      std::ranges::for_each(junctions, [&](auto x) {
-        circuits += x.size() > 0;
-      });
-
-      if (circuits == 1) {
+      circuits = junctions.size();
+      if (circuits == 1)
         return i;
-      }
     }
     
     return size_t{0};
@@ -103,9 +100,7 @@ auto connect_junctions(const auto& distances, auto& junctions, bool gold = 0) {
     std::ranges::for_each(std::views::iota(std::size_t{0}, std::size_t{1000}), find_connection);
     std::ranges::sort(junctions, [](auto x, auto y) {return x.size() > y.size();});
     res *= junctions[0].size() * junctions[1].size() * junctions[2].size();
-  }
-
-  if (gold) {
+  } else {
     auto gold_i = std::ranges::find_if(std::views::iota(std::size_t{0}, distances.size()), find_connection);
     res = *gold_i;
   }
@@ -113,13 +108,10 @@ auto connect_junctions(const auto& distances, auto& junctions, bool gold = 0) {
   return res;
 }
 
-
-int main() {
+auto main() -> int {
   auto input = get_input();
   auto distances = get_distances(input);
-  std::ranges::sort(distances, [](auto x, auto y) {return get<2>(x) < get<2>(y);});
   auto junctions = prepare_junctions(input);
-
   std::println("Silver: {}",connect_junctions(distances,junctions));
 
   auto [x, y, _] = distances[connect_junctions(distances,junctions,1)];
